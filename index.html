@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Plinng · SDR Coaching</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --black:#0A0A0A;
+  --card:#141414;
+  --card2:#1C1C1C;
+  --green:#C6F135;
+  --green-dim:#9BBF1A;
+  --text:#FFFFFF;
+  --muted:#777777;
+  --border:#252525;
+  --red:#FF5A5A;
+  --amber:#F5A623;
+  --blue:#4A9EFF;
+  --purple:#A78BFA;
+}
+html,body{min-height:100vh;background:var(--black);color:var(--text);font-family:'Sora',sans-serif;}
+body{display:flex;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  padding:14px 28px;border-bottom:1px solid var(--border);
+  background:var(--black);position:sticky;top:0;z-index:100;
+}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-img{height:26px;}
+.logo-badge{
+  background:var(--green);color:#0A0A0A;font-size:10px;font-weight:800;
+  padding:3px 8px;border-radius:4px;letter-spacing:0.08em;text-transform:uppercase;
+}
+.crm-pill{
+  display:flex;align-items:center;gap:8px;background:var(--card);
+  border:1px solid var(--border);border-radius:8px;padding:7px 14px;
+  font-size:12px;color:var(--muted);min-width:220px;
+}
+.crm-pill svg{flex-shrink:0;opacity:0.5;}
+.crm-pill span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px;}
+
+/* TABS */
+.tabs{display:flex;gap:2px;padding:0 28px;border-bottom:1px solid var(--border);background:var(--black);}
+.tab{
+  padding:12px 20px;font-size:13px;font-weight:600;cursor:pointer;
+  border-bottom:2px solid transparent;color:var(--muted);
+  background:transparent;border-top:none;border-left:none;border-right:none;
+  font-family:'Sora',sans-serif;transition:color 0.15s,border-color 0.15s;
+}
+.tab.active{color:var(--green);border-bottom-color:var(--green);}
+.tab:hover:not(.active){color:var(--text);}
+
+/* CONTENT */
+.content{max-width:860px;margin:0 auto;width:100%;padding:28px 28px 60px;}
+.pane{display:none;}.pane.active{display:block;}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:14px;}
+.sec-label{
+  font-size:10px;font-weight:700;color:var(--green);
+  text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;
+}
+
+/* CRITERIA */
+.criterion{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);}
+.criterion:last-child{border-bottom:none;padding-bottom:0;}
+.crit-label{flex:1;font-size:13px;color:var(--text);line-height:1.4;}
+.crit-w{font-size:10px;color:var(--muted);margin-top:2px;}
+.stars{display:flex;gap:4px;}
+.star{
+  width:30px;height:30px;border-radius:7px;border:1px solid var(--border);
+  background:var(--card2);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:700;color:var(--muted);
+  user-select:none;transition:all 0.12s;
+}
+.star:hover{border-color:var(--green);color:var(--green);}
+.star.s1,.star.s2{background:#2A0F0F;border-color:var(--red);color:var(--red);}
+.star.s3{background:#2A1F0A;border-color:var(--amber);color:var(--amber);}
+.star.s4{background:#162A0A;border-color:#6BBF1A;color:#6BBF1A;}
+.star.s5{background:#1C2E05;border-color:var(--green);color:var(--green);}
+
+/* FORM ELEMENTS */
+select,input[type=text],input[type=date],input[type=url],textarea{
+  border:1px solid var(--border);border-radius:8px;padding:9px 12px;
+  font-family:'Sora',sans-serif;font-size:13px;color:var(--text);
+  background:var(--card2);outline:none;transition:border-color 0.15s;
+}
+select:focus,input:focus,textarea:focus{border-color:var(--green);}
+select option{background:#1C1C1C;}
+textarea{resize:vertical;width:100%;}
+
+/* SCORE ROW */
+.score-row{
+  display:flex;align-items:center;gap:20px;padding:18px 20px;
+  background:var(--card2);border-radius:12px;margin:14px 0;
+  border:1px solid var(--border);
+}
+.p-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;flex:1;}
+.p-fill{height:100%;border-radius:3px;transition:width 0.4s,background 0.3s;}
+
+/* BUTTONS */
+.btn{
+  padding:10px 20px;border-radius:8px;border:1px solid var(--border);
+  font-size:13px;font-weight:600;cursor:pointer;background:transparent;
+  color:var(--text);font-family:'Sora',sans-serif;transition:all 0.15s;
+}
+.btn:hover{border-color:var(--green);color:var(--green);}
+.btn-green{background:var(--green);color:#0A0A0A;border-color:var(--green);}
+.btn-green:hover{background:var(--green-dim);border-color:var(--green-dim);color:#0A0A0A;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;}
+
+/* AVATARS */
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+
+/* PODIO */
+.podium-wrap{display:flex;align-items:flex-end;gap:8px;margin-bottom:4px;}
+.podium-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.podium-block{width:100%;display:flex;align-items:center;justify-content:center;border-radius:8px 8px 0 0;font-size:20px;font-weight:800;}
+
+/* RANK */
+.rank-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.rank-row:last-child{border-bottom:none;}
+.bar-track{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:5px;}
+.bar-fill{height:100%;border-radius:3px;}
+
+/* HIST */
+.hist-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.hist-row:last-child{border-bottom:none;}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;}
+.mchip{
+  padding:5px 12px;border-radius:6px;border:1px solid var(--border);
+  font-size:12px;cursor:pointer;color:var(--muted);background:transparent;
+  font-family:'Sora',sans-serif;transition:all 0.15s;
+}
+.mchip.active{background:rgba(198,241,53,0.1);border-color:var(--green);color:var(--green);}
+.action-num{
+  width:22px;height:22px;border-radius:50%;
+  background:rgba(198,241,53,0.12);color:var(--green);
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.empty{font-size:13px;color:var(--muted);padding:12px 0;}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:28px;right:28px;background:var(--green);color:#0A0A0A;
+  font-size:13px;font-weight:700;padding:12px 20px;border-radius:10px;
+  opacity:0;transform:translateY(8px);transition:all 0.2s;pointer-events:none;z-index:999;
+}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .topbar{padding:12px 16px;}
+  .tabs{padding:0 16px;}
+  .content{padding:20px 16px 60px;}
+  .stars .star{width:26px;height:26px;font-size:11px;}
+  .crm-pill{min-width:unset;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <img class="logo-img" src="https://cdn.prod.website-files.com/68a58525fc4d9bcd290f5638/69036e89a74fa58302a5bdf1_Frame%201707482426.svg" alt="Plinng"
+      onerror="this.style.display='none';document.getElementById('logo-fb').style.display='block';" />
+    <div id="logo-fb" style="display:none;font-size:18px;font-weight:800;color:var(--text);letter-spacing:-0.5px;">Plinng</div>
+    <span class="logo-badge">SDR Coaching</span>
+  </div>
+  <div class="crm-pill" id="crm-pill">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <rect x="1" y="1" width="12" height="12" rx="2" stroke="#777" stroke-width="1.2"/>
+      <path d="M4 7h6M7 4v6" stroke="#777" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <span id="crm-display">CRM no configurado</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('scorecard')">Scorecard</button>
+  <button class="tab" onclick="switchTab('podio')">Podio</button>
+  <button class="tab" onclick="switchTab('historico')">Histórico</button>
+  <button class="tab" onclick="switchTab('config')">Configuración</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- SCORECARD -->
+  <div id="pane-scorecard" class="pane active">
+    <div class="card">
+      <div class="sec-label">SDR evaluado</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <select id="sdr-select" style="min-width:155px;">
+          <option value="">Seleccionar SDR...</option>
+          <option>Ruby</option><option>Sergio</option><option>Lupe</option><option>Camila</option><option>Catalina</option>
+        </select>
+        <input type="date" id="call-date" />
+        <select id="call-num" style="min-width:160px;">
+          <option value="">Llamada del mes...</option>
+          <option value="1">Llamada 1 de 4</option>
+          <option value="2">Llamada 2 de 4</option>
+          <option value="3">Llamada 3 de 4</option>
+          <option value="4">Llamada 4 de 4</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="sc-sections"></div>
+
+    <div class="score-row">
+      <div>
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Puntuación total</div>
+        <div style="display:flex;align-items:baseline;gap:8px;">
+          <span style="font-size:36px;font-weight:800;" id="sc-total">—</span>
+          <span style="font-size:13px;color:var(--muted);">/ 100</span>
+          <span id="sc-grade" style="font-size:12px;font-weight:700;padding:3px 10px;border-radius:5px;background:var(--card2);color:var(--muted);">Sin calificar</span>
+        </div>
+      </div>
+      <div class="p-track"><div class="p-fill" id="sc-bar" style="width:0%;background:var(--green);"></div></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Notas del coaching</div>
+      <textarea id="sc-notes" rows="3" placeholder="Observaciones generales sobre la llamada..."></textarea>
+    </div>
+
+    <div class="card">
+      <div class="sec-label">Plan de acción post-sesión</div>
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">Compromisos de mejora acordados · con fecha de seguimiento</p>
+      <div style="display:flex;flex-direction:column;gap:10px;" id="actions-wrap">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="action-num">1</div>
+          <input type="text" placeholder="Acción de mejora concreta..." style="flex:2;min-width:0;" />
+          <input type="date" style="min-width:140px;" />
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="action-num">2</div>
+          <input type="text" placeholder="Acción de mejora concreta..." style="flex:2;min-width:0;" />
+          <input type="date" style="min-width:140px;" />
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="action-num">3</div>
+          <input type="text" placeholder="Acción de mejora concreta..." style="flex:2;min-width:0;" />
+          <input type="date" style="min-width:140px;" />
+        </div>
+      </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+        <span style="font-size:12px;color:var(--muted);">Próxima sesión:</span>
+        <input type="date" id="next-session" />
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-green" onclick="saveEval()">Guardar evaluación</button>
+      <button class="btn" onclick="resetSC()">Limpiar</button>
+    </div>
+  </div>
+
+  <!-- PODIO -->
+  <div id="pane-podio" class="pane">
+    <div class="card">
+      <div class="sec-label">Mes</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;" id="podio-months"></div>
+    </div>
+    <div id="podio-wrap"></div>
+    <div class="card">
+      <div class="sec-label">Ranking completo</div>
+      <div id="ranking-wrap"></div>
+    </div>
+  </div>
+
+  <!-- HISTORICO -->
+  <div id="pane-historico" class="pane">
+    <div class="card">
+      <div class="sec-label">Filtros</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <select id="hist-sdr" style="min-width:145px;">
+          <option value="">Todos los SDRs</option>
+          <option>Ruby</option><option>Sergio</option><option>Lupe</option>
+          <option>Camila</option><option>Catalina</option>
+        </select>
+        <select id="hist-month" style="min-width:145px;"><option value="">Todos los meses</option></select>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Progreso mensual · objetivo 4 llamadas</div>
+      <div id="progress-wrap"></div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Todas las evaluaciones</div>
+      <div id="hist-list"></div>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div id="pane-config" class="pane">
+    <div class="card">
+      <div class="sec-label">Link del CRM</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Pega la URL de tu CRM. Se mostrará como referencia en el header de la aplicación.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <input type="url" id="crm-input" placeholder="https://app.hubspot.com/..." style="flex:1;min-width:240px;" />
+        <button class="btn btn-green" onclick="saveCRM()">Guardar</button>
+      </div>
+      <div id="crm-preview" style="margin-top:12px;font-size:12px;color:var(--muted);"></div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Equipo SDR</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Miembros activos del equipo este mes.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;">
+        <div id="team-chips"></div>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(255,90,90,0.3);">
+      <div class="sec-label" style="color:var(--red);">Zona de peligro</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Borra todos los datos guardados. Esta acción no se puede deshacer.</p>
+      <button class="btn" style="border-color:var(--red);color:var(--red);" onclick="clearAll()">Borrar todos los datos</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SDRS=['Ruby','Sergio','Lupe','Camila','Catalina'];
+const AV={
+  Ruby:['#2A1A2E','#C084FC'],
+  Sergio:['#0A1F2E','#38BDF8'],
+  Lupe:['#1A2A0A','#C6F135'],
+  Camila:['#2E1A0A','#FB923C'],
+  Catalina:['#1A0A2E','#A78BFA']
+};
+const CRITERIA=[
+  {s:'Apertura y rapport',items:[
+    {id:'intro',l:'Presentación clara y profesional',w:5},
+    {id:'rapport',l:'Genera confianza y conexión inicial',w:5},
+    {id:'permiso',l:'Pide permiso / valida disponibilidad',w:5},
+  ]},
+  {s:'Descubrimiento y calificación',items:[
+    {id:'pain',l:'Identifica pain points del prospect',w:10},
+    {id:'preguntas',l:'Usa preguntas abiertas y de diagnóstico',w:10},
+    {id:'escucha',l:'Escucha activa (no interrumpe, reformula)',w:10},
+    {id:'bant',l:'Califica BANT / MEDDIC correctamente',w:10},
+  ]},
+  {s:'Propuesta de valor',items:[
+    {id:'pitch',l:'Adapta el pitch al perfil del prospect',w:10},
+    {id:'dif',l:'Articula diferenciación vs competencia',w:5},
+    {id:'obj',l:'Maneja objeciones con seguridad',w:10},
+  ]},
+  {s:'Cierre y próximos pasos',items:[
+    {id:'cta',l:'Propone siguiente paso concreto (demo/reunión)',w:10},
+    {id:'urg',l:'Crea urgencia o relevancia temporal',w:5},
+    {id:'comp',l:'Obtiene compromiso explícito del prospect',w:5},
+  ]},
+];
+
+let scores={};
+let evals=[];
+let selMonth=null;
+let crmUrl='';
+
+/* ── STORAGE ─────────────────────────────────── */
+function save(){
+  try{localStorage.setItem('plinng_evals',JSON.stringify(evals));
+      localStorage.setItem('plinng_crm',crmUrl);}catch(e){}
+}
+function load(){
+  try{
+    const e=localStorage.getItem('plinng_evals');if(e)evals=JSON.parse(e);
+    const c=localStorage.getItem('plinng_crm');if(c){crmUrl=c;updateCRMDisplay();}
+  }catch(e){}
+}
+
+/* ── TOAST ───────────────────────────────────── */
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ── HELPERS ─────────────────────────────────── */
+function gmk(d){const dt=new Date(d+'T12:00:00');return`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;}
+function fmtM(k){const[y,m]=k.split('-');const n=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];return`${n[parseInt(m)-1]} ${y}`;}
+function gradeInfo(pct){
+  if(pct>=85)return{g:'Excelente',c:'#C6F135',bg:'rgba(198,241,53,0.12)'};
+  if(pct>=70)return{g:'Bueno',c:'#4ADE80',bg:'rgba(74,222,128,0.12)'};
+  if(pct>=55)return{g:'Regular',c:'#F5A623',bg:'rgba(245,166,35,0.12)'};
+  return{g:'Necesita mejora',c:'#FF5A5A',bg:'rgba(255,90,90,0.12)'};
+}
+
+/* ── CRM ─────────────────────────────────────── */
+function saveCRM(){
+  const val=document.getElementById('crm-input').value.trim();
+  crmUrl=val;save();updateCRMDisplay();
+  document.getElementById('crm-preview').textContent=val?'✓ Link guardado':'';
+  toast('Link del CRM guardado');
+}
+function updateCRMDisplay(){
+  const el=document.getElementById('crm-display');
+  el.textContent=crmUrl||'CRM no configurado';
+  const inp=document.getElementById('crm-input');
+  if(inp)inp.value=crmUrl;
+}
+
+/* ── SCORECARD ───────────────────────────────── */
+function renderSC(){
+  const c=document.getElementById('sc-sections');c.innerHTML='';
+  CRITERIA.forEach(sec=>{
+    const d=document.createElement('div');d.className='card';
+    d.innerHTML=`<div class="sec-label">${sec.s}</div>`;
+    sec.items.forEach(item=>{
+      const cur=scores[item.id]||0;
+      const r=document.createElement('div');r.className='criterion';
+      r.innerHTML=`<div style="flex:1"><div class="crit-label">${item.l}</div><div class="crit-w">Peso: ${item.w}%</div></div>
+        <div class="stars">${[1,2,3,4,5].map(n=>`<div class="star${cur>=n?' s'+n:''}" data-id="${item.id}" data-v="${n}">${n}</div>`).join('')}</div>`;
+      d.appendChild(r);
+    });
+    c.appendChild(d);
+  });
+  document.querySelectorAll('.star').forEach(s=>s.addEventListener('click',()=>{
+    scores[s.dataset.id]=parseInt(s.dataset.v);
+    document.querySelectorAll(`[data-id="${s.dataset.id}"]`).forEach(x=>{
+      const n=parseInt(x.dataset.v);x.className='star'+(scores[s.dataset.id]>=n?' s'+n:'');
+    });
+    updScore();
+  }));
+  updScore();
+}
+
+function calcScore(){
+  const all=CRITERIA.flatMap(s=>s.items);
+  if(!all.some(i=>scores[i.id]))return null;
+  let w=0,tw=0;
+  all.forEach(i=>{if(scores[i.id]){w+=(scores[i.id]/5)*i.w;tw+=i.w;}});
+  return Math.round((w/tw)*100);
+}
+
+function updScore(){
+  const pct=calcScore();
+  const el=document.getElementById('sc-total');
+  const bar=document.getElementById('sc-bar');
+  const grade=document.getElementById('sc-grade');
+  if(pct===null){
+    el.textContent='—';bar.style.width='0%';
+    grade.textContent='Sin calificar';
+    grade.style.cssText='font-size:12px;font-weight:700;padding:3px 10px;border-radius:5px;background:var(--card2);color:var(--muted)';
+    return;
+  }
+  el.textContent=pct;bar.style.width=pct+'%';
+  const{g,c,bg}=gradeInfo(pct);
+  grade.textContent=g;grade.style.cssText=`font-size:12px;font-weight:700;padding:3px 10px;border-radius:5px;background:${bg};color:${c}`;
+  bar.style.background=c;
+}
+
+function saveEval(){
+  const sdr=document.getElementById('sdr-select').value;
+  const date=document.getElementById('call-date').value;
+  const num=document.getElementById('call-num').value;
+  if(!sdr||!date||!num){toast('Selecciona SDR, fecha y número de llamada.');return;}
+  const pct=calcScore();if(pct===null){toast('Evalúa al menos un criterio.');return;}
+  const notes=document.getElementById('sc-notes').value;
+  const actions=Array.from(document.querySelectorAll('#actions-wrap > div')).map(el=>{
+    const ins=el.querySelectorAll('input');return{desc:ins[0].value,date:ins[1].value};
+  }).filter(a=>a.desc);
+  const next=document.getElementById('next-session').value;
+  const detail={};CRITERIA.flatMap(s=>s.items).forEach(i=>{if(scores[i.id])detail[i.id]=scores[i.id];});
+  evals.push({sdr,date,num:parseInt(num),score:pct,notes,actions,next,detail,ts:Date.now()});
+  save();resetSC();renderPodio();renderHistorico();
+  switchTab('podio');toast('Evaluación guardada');
+}
+
+function resetSC(){
+  scores={};
+  ['sdr-select','call-date','call-num','sc-notes','next-session'].forEach(id=>{document.getElementById(id).value='';});
+  document.querySelectorAll('#actions-wrap input').forEach(i=>i.value='');
+  renderSC();
+}
+
+/* ── PODIO ───────────────────────────────────── */
+function getMonths(){return[...new Set(evals.map(e=>gmk(e.date)))].sort().reverse();}
+
+function renderPodio(){
+  const months=getMonths();
+  const mw=document.getElementById('podio-months');mw.innerHTML='';
+  if(!months.length){
+    document.getElementById('podio-wrap').innerHTML='<p class="empty">Aún no hay evaluaciones guardadas.</p>';
+    document.getElementById('ranking-wrap').innerHTML='';return;
+  }
+  if(!selMonth||!months.includes(selMonth))selMonth=months[0];
+  months.forEach(m=>{
+    const ch=document.createElement('button');ch.className='mchip'+(m===selMonth?' active':'');
+    ch.textContent=fmtM(m);ch.onclick=()=>{selMonth=m;renderPodio();};mw.appendChild(ch);
+  });
+
+  const me=evals.filter(e=>gmk(e.date)===selMonth);
+  const bySDR={};SDRS.forEach(s=>{bySDR[s]={total:0,count:0};});
+  me.forEach(e=>{bySDR[e.sdr].total+=e.score;bySDR[e.sdr].count++;});
+  const ranked=SDRS.map(s=>({sdr:s,avg:bySDR[s].count?Math.round(bySDR[s].total/bySDR[s].count):null,count:bySDR[s].count}))
+    .filter(x=>x.avg!==null).sort((a,b)=>b.avg-a.avg);
+
+  const pw=document.getElementById('podio-wrap');
+  if(!ranked.length){pw.innerHTML='<p class="empty">Sin evaluaciones este mes.</p>';document.getElementById('ranking-wrap').innerHTML='';return;}
+
+  const top3=ranked.slice(0,3);
+  const order=[1,0,2].filter(i=>top3[i]!==undefined);
+  const heights=['70px','105px','55px'];
+  const podBg=['rgba(198,241,53,0.18)','var(--green)','rgba(198,241,53,0.08)'];
+  const podCol=['#C6F135','#0A0A0A','#9BBF1A'];
+  const labels=['2do','1ro','3ro'];
+
+  pw.innerHTML=`<div class="card"><div class="sec-label">Podio · ${fmtM(selMonth)}</div>
+    <div class="podium-wrap">
+      ${order.map(i=>{if(!top3[i])return'';
+        const[bg,col]=AV[top3[i].sdr];
+        return`<div class="podium-col">
+          <div style="font-size:12px;color:var(--muted);">${top3[i].avg}/100</div>
+          <div class="avatar" style="background:${bg};color:${col};">${top3[i].sdr.slice(0,2).toUpperCase()}</div>
+          <div style="font-size:13px;font-weight:700;color:var(--text);text-align:center;">${top3[i].sdr}</div>
+          <div style="font-size:11px;color:var(--muted);text-align:center;">${top3[i].count}/4 llamadas</div>
+          <div class="podium-block" style="height:${heights[i]};background:${podBg[i]};color:${podCol[i]};">${labels[i]}</div>
+        </div>`;}).join('')}
+    </div>
+  </div>`;
+
+  const rw=document.getElementById('ranking-wrap');rw.innerHTML='';
+  ranked.forEach((r,i)=>{
+    const[bg,col]=AV[r.sdr];const{c}=gradeInfo(r.avg);
+    const row=document.createElement('div');row.className='rank-row';
+    const medal=i===0?'★':`${i+1}`;
+    row.innerHTML=`<div style="width:24px;text-align:center;font-size:15px;font-weight:700;color:${i===0?'var(--green)':'var(--muted)'};">${medal}</div>
+      <div class="avatar" style="background:${bg};color:${col};">${r.sdr.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;">
+          <span style="font-size:13px;font-weight:600;">${r.sdr}</span>
+          <span style="font-size:11px;color:var(--muted);">${r.avg}/100 · ${r.count}/4 llamadas</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${r.avg}%;background:${c};"></div></div>
+      </div>`;
+    rw.appendChild(row);
+  });
+  const missing=SDRS.filter(s=>!ranked.find(r=>r.sdr===s));
+  if(missing.length){
+    const m=document.createElement('div');
+    m.style.cssText='font-size:11px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);';
+    m.textContent='Sin evaluaciones: '+missing.join(', ');rw.appendChild(m);
+  }
+}
+
+/* ── HISTORICO ───────────────────────────────── */
+function renderHistorico(){
+  const months=getMonths();
+  const hm=document.getElementById('hist-month');const curM=hm.value;
+  hm.innerHTML='<option value="">Todos los meses</option>';
+  months.forEach(m=>{const o=document.createElement('option');o.value=m;o.textContent=fmtM(m);hm.appendChild(o);});
+  if(months.includes(curM))hm.value=curM;
+
+  const fSDR=document.getElementById('hist-sdr').value;
+  const fMonth=document.getElementById('hist-month').value;
+  const pw=document.getElementById('progress-wrap');pw.innerHTML='';
+  const showSDRs=fSDR?[fSDR]:SDRS;
+  const showMonths=fMonth?[fMonth]:months;
+  if(!showMonths.length){
+    pw.innerHTML='<p class="empty">Sin datos aún.</p>';
+    document.getElementById('hist-list').innerHTML='';return;
+  }
+  showSDRs.forEach(sdr=>{
+    const[bg,col]=AV[sdr];
+    showMonths.forEach(m=>{
+      const me=evals.filter(e=>e.sdr===sdr&&gmk(e.date)===m);
+      const count=me.length;
+      const avg=count?Math.round(me.reduce((a,e)=>a+e.score,0)/count):null;
+      const pct=Math.round((count/4)*100);
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);';
+      row.innerHTML=`<div class="avatar" style="background:${bg};color:${col};font-size:11px;width:32px;height:32px;">${sdr.slice(0,2).toUpperCase()}</div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:13px;font-weight:600;">${sdr}</span>
+            <span style="font-size:11px;color:var(--muted);">${fmtM(m)} · ${count}/4${avg!==null?' · avg '+avg:''}</span>
+          </div>
+          <div style="height:5px;background:var(--border);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:${pct}%;background:${pct>=100?'var(--green)':pct>=50?'#4ADE80':'var(--amber)'};border-radius:3px;transition:width 0.3s;"></div>
+          </div>
+        </div>`;
+      pw.appendChild(row);
+    });
+  });
+
+  const hl=document.getElementById('hist-list');hl.innerHTML='';
+  const filtered=evals.filter(e=>(fSDR?e.sdr===fSDR:true)&&(fMonth?gmk(e.date)===fMonth:true)).sort((a,b)=>b.ts-a.ts);
+  if(!filtered.length){hl.innerHTML='<p class="empty">Sin evaluaciones con estos filtros.</p>';return;}
+  filtered.forEach(e=>{
+    const[bg,col]=AV[e.sdr];const{g,c,bg:gbg}=gradeInfo(e.score);
+    const row=document.createElement('div');row.className='hist-row';
+    row.innerHTML=`<div class="avatar" style="background:${bg};color:${col};font-size:11px;width:32px;height:32px;">${e.sdr.slice(0,2).toUpperCase()}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;">${e.sdr} <span style="font-weight:400;color:var(--muted);">· Llamada ${e.num}/4 · ${e.date}</span></div>
+        ${e.notes?`<div style="font-size:11px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${e.notes}</div>`:''}
+      </div>
+      <div class="badge" style="background:${gbg};color:${c};">${e.score}/100</div>`;
+    hl.appendChild(row);
+  });
+}
+
+/* ── CONFIG ──────────────────────────────────── */
+function renderTeam(){
+  const wrap=document.getElementById('team-chips');
+  if(!wrap)return;
+  wrap.innerHTML='';
+  SDRS.forEach(s=>{
+    const[bg,col]=AV[s];
+    const chip=document.createElement('div');
+    chip.style.cssText=`display:inline-flex;align-items:center;gap:8px;background:${bg};border:1px solid ${col}33;border-radius:8px;padding:7px 12px;margin:4px;`;
+    chip.innerHTML=`<div style="width:26px;height:26px;border-radius:50%;background:${bg};border:1.5px solid ${col};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${col};">${s.slice(0,2).toUpperCase()}</div>
+      <span style="font-size:13px;font-weight:600;color:${col};">${s}</span>`;
+    wrap.appendChild(chip);
+  });
+}
+
+function clearAll(){
+  if(!confirm('¿Seguro? Se borrarán todas las evaluaciones guardadas.'))return;
+  evals=[];save();
+  renderPodio();renderHistorico();toast('Datos borrados');
+}
+
+/* ── TABS ────────────────────────────────────── */
+function switchTab(t){
+  const names=['scorecard','podio','historico','config'];
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',names[i]===t));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('pane-'+t).classList.add('active');
+  if(t==='podio')renderPodio();
+  if(t==='historico')renderHistorico();
+  if(t==='config')renderTeam();
+}
+
+/* ── INIT ────────────────────────────────────── */
+document.getElementById('hist-sdr').onchange=renderHistorico;
+document.getElementById('hist-month').onchange=renderHistorico;
+
+load();
+renderSC();
+renderPodio();
+</script>
+</body>
+</html>
